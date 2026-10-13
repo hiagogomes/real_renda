@@ -1,0 +1,23 @@
+{% extends "simulador/base.html" %}
+{% block title %}Política de privacidade | {{ SITE_NAME }}{% endblock %}
+{% block description %}Política de privacidade do {{ SITE_NAME }}: dados coletados, cookies, publicidade do Google e direitos conforme a LGPD.{% endblock %}
+{% block og_title %}Política de privacidade | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container-xxl"><main class="pagina-texto conteudo" id="conteudo">
+  <h1>Política de privacidade</h1>
+  <p>Última atualização: {% now "d/m/Y" %}.</p>
+  <h2>Dados das simulações</h2>
+  <p>Os valores que você digita nas calculadoras são processados no seu navegador. Eles não são enviados, armazenados nem compartilhados por nós.</p>
+  <h2>Cookies e publicidade</h2>
+  <p>Este site usa o Google AdSense para exibir anúncios. O Google e seus parceiros podem usar cookies e identificadores para exibir anúncios com base em visitas anteriores a este e a outros sites, e para medir o desempenho dos anúncios.</p>
+  <ul>
+    <li>Você pode gerenciar a personalização de anúncios em <a href="https://adssettings.google.com" rel="noopener" target="_blank">adssettings.google.com</a>.</li>
+    <li>Saiba como o Google usa dados de sites parceiros em <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank">policies.google.com/technologies/partner-sites</a>.</li>
+    <li>Você também pode bloquear ou apagar cookies nas configurações do seu navegador.</li>
+  </ul>
+  <h2>Dados de acesso</h2>
+  <p>Como qualquer servidor web, o site pode registrar dados técnicos de acesso (endereço IP, navegador, páginas visitadas) para segurança e estatísticas agregadas.</p>
+  <h2>Seus direitos (LGPD)</h2>
+  <p>Conforme a Lei Geral de Proteção de Dados (Lei 13.709/2018), você pode solicitar informações, correção ou exclusão de dados pessoais eventualmente tratados. {% if CONTACT_EMAIL %}Escreva para <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.{% else %}Use a página de <a href="{% url 'simulador:contato' %}">contato</a>.{% endif %}</p>
+</main></div>
+{% endblock %}

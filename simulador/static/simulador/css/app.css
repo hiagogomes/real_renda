@@ -1,0 +1,142 @@
+/* Real Renda — tokens */
+:root {
+  --paper: #f4f6f3;
+  --surface: #ffffff;
+  --ink: #14212b;
+  --muted: #55646e;
+  --rule: #d8ded9;
+  --green: #1f6f54;
+  --green-soft: #e3efe9;
+  --amber: #a8680b;
+  --amber-soft: #f8ecd6;
+  --accent: var(--green);
+  --accent-soft: var(--green-soft);
+  --radius: 6px;
+  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  --bs-body-font-family: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-link-color: var(--green);
+  --bs-link-hover-color: #154d3a;
+  --bs-border-color: var(--rule);
+  --bs-border-radius: var(--radius);
+  --bs-focus-ring-color: rgba(31, 111, 84, .3);
+}
+body { line-height: 1.6; font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.form-control:focus, .form-select:focus, .form-check-input:focus { border-color: var(--green); box-shadow: 0 0 0 .2rem var(--bs-focus-ring-color); }
+.form-check-input:checked { background-color: var(--green); border-color: var(--green); }
+h1, h2, h3, .marca, .resultado__valor { font-family: var(--serif); font-weight: 600; letter-spacing: -.01em; }
+
+.pular { position: absolute; left: -999px; top: 0; background: var(--ink); color: #fff; padding: .5rem 1rem; z-index: 10; }
+.pular:focus { left: 0; }
+
+/* Topo */
+.topo { border-bottom: 1px solid var(--rule); background: var(--surface); }
+.topo__linha { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1.5rem; padding-block: .85rem; }
+.marca { font-size: 1.35rem; color: var(--ink); text-decoration: none; }
+.topo__nav { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
+.topo__nav a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: .95rem; }
+.topo__nav a:hover { color: var(--green); }
+
+/* Intro */
+.intro { padding-block: 1.75rem 1.25rem; }
+.intro h1 { font-size: clamp(1.7rem, 4.2vw, 2.6rem); line-height: 1.15; margin: 0 0 .5rem; max-width: 24ch; }
+.intro__sub { color: var(--muted); font-size: 1.05rem; margin: 0; max-width: 60ch; }
+
+/* Abas */
+.abas { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.25rem; }
+.abas__item { background: none; border: 0; border-bottom: 3px solid transparent; padding: .6rem 0; margin-bottom: -1px; font-weight: 600; color: var(--muted); }
+.abas__item:hover { color: var(--ink); }
+.abas__item.active { color: var(--ink); border-bottom-color: var(--green); }
+
+/* Formulário */
+.painel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1.25rem; }
+.campo { margin-bottom: 1rem; }
+.campo label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .25rem; }
+.campo.form-check label { display: inline; font-size: .9rem; }
+.campo__nota { font-size: .8rem; color: var(--muted); margin-top: .25rem; }
+.input-group-text { background: var(--paper); color: var(--muted); }
+
+/* Resultado — a cor de destaque muda quando se descontam a inflação */
+.resultado { --accent: var(--green); --accent-soft: var(--green-soft); background: var(--surface); border: 1px solid var(--rule); border-left: 5px solid var(--accent); border-radius: var(--radius); padding: 1.25rem; }
+.resultado.is-real { --accent: var(--amber); --accent-soft: var(--amber-soft); }
+@media (prefers-reduced-motion: no-preference) { .resultado { transition: border-left-color .25s ease; } }
+.resultado__chave { margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--rule); font-weight: 600; }
+.resultado__rotulo { margin: 0; color: var(--muted); font-size: .9rem; }
+.resultado__valor { margin: 0; font-size: clamp(2rem, 6vw, 3rem); line-height: 1.15; color: var(--accent); overflow-wrap: anywhere; }
+.resultado__leitura { margin: .35rem 0 1rem; min-height: 3em; background: var(--accent-soft); border-radius: var(--radius); padding: .5rem .75rem; font-size: .92rem; }
+.resultado__leitura:empty { display: none; }
+.resumo { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: 0 0 1rem; }
+.resumo dt { font-size: .8rem; color: var(--muted); font-weight: 500; }
+.resumo dd { margin: 0; font-weight: 600; font-size: 1.1rem; overflow-wrap: anywhere; }
+.resumo .resumo__nota { font-size: .78rem; font-weight: 400; color: var(--muted); }
+.resumo--tres > div { flex: 1 1 9rem; }
+.grafico { position: relative; height: 320px; margin-bottom: .75rem; }
+.acoes { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* Tabelas */
+.tabelas { margin-top: 1.25rem; --bs-accordion-border-color: var(--rule); --bs-accordion-active-bg: var(--green-soft); --bs-accordion-active-color: var(--ink); --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem var(--bs-focus-ring-color); }
+.tabela-rolagem { overflow: auto; max-height: 420px; }
+.tabela th, .tabela td { white-space: nowrap; text-align: right; }
+.tabela th:first-child, .tabela td:first-child { text-align: left; }
+.tabela thead th { position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.tabela--estatica { max-width: 640px; }
+
+.taxas-ref { font-size: .8rem; color: var(--muted); margin: 1rem 0 0; }
+
+/* Conteúdo editorial */
+.conteudo { max-width: 72ch; margin-block: 2.5rem; }
+.conteudo h2 { font-size: 1.6rem; margin-top: 0; }
+.conteudo h3 { font-size: 1.2rem; margin-top: 1.75rem; }
+.conteudo p, .conteudo li { line-height: 1.7; }
+.formula { font-family: var(--serif); font-size: 1.15rem; background: var(--surface); border-left: 3px solid var(--green); padding: .6rem 1rem; }
+.pagina-texto { padding-top: 1.5rem; }
+.faq { border-bottom: 1px solid var(--rule); padding: .75rem 0; }
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq p { margin: .5rem 0 0; }
+
+/* Anúncios: altura reservada para evitar salto de layout (CLS) */
+.ad { position: relative; margin-block: 2rem; padding-top: 1.1rem; text-align: center; overflow: hidden; }
+.ad__rotulo { position: absolute; top: 0; left: 0; right: 0; font-size: .7rem; color: var(--muted); }
+.ad--horizontal { min-height: 130px; }
+.ad--retangulo { min-height: 280px; }
+.ad--vertical { min-height: 600px; margin-block: 0; }
+.ad--vazio { display: flex; align-items: center; justify-content: center; border: 1px dashed var(--rule); color: var(--muted); font-size: .85rem; }
+.ad:has(ins[data-ad-status="unfilled"]) { display: none; }
+.lateral { position: sticky; top: 1rem; }
+
+/* Rodapé */
+.rodape { border-top: 1px solid var(--rule); background: var(--surface); margin-top: 3rem; padding-block: 1.5rem; font-size: .88rem; color: var(--muted); }
+.rodape__aviso { max-width: 80ch; }
+.rodape__nav { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
+.rodape__copy { margin: .75rem 0 0; }
+
+@media (max-width: 575.98px) {
+  .painel, .resultado { padding: 1rem; }
+  .grafico { height: 260px; }
+}
+
+/* PDF / impressão: só o resultado */
+@media print {
+  .topo, .rodape, .ad, .lateral, aside, .painel, .abas, .acoes, .conteudo, .tabelas, .taxas-ref, .resultado__chave, .pular { display: none !important; }
+  .tab-pane:not(.active) { display: none !important; }
+  .resultado { border: 0; }
+  body { background: #fff; }
+}
+
+/* UX: divulgação progressiva, atalhos e contraste nominal x real */
+.avancado { margin-bottom: 1rem; border-top: 1px solid var(--rule); padding-top: .75rem; }
+.avancado > summary { cursor: pointer; font-weight: 600; font-size: .9rem; color: var(--muted); margin-bottom: .75rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: -.25rem 0 1rem; }
+.chip { background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: .3rem .9rem; font-size: .88rem; font-weight: 500; }
+.chip:hover { border-color: var(--green); color: var(--green); }
+.contraste { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: .5rem 0 .75rem; border-block: 1px solid var(--rule); }
+.contraste__item { padding: .6rem .75rem .6rem 0; }
+.contraste__item + .contraste__item { padding-left: .9rem; border-left: 1px solid var(--rule); }
+.contraste__item span { display: block; font-size: .78rem; color: var(--muted); }
+.contraste__item strong { font-size: 1.05rem; overflow-wrap: anywhere; }
+.contraste__item--real strong { color: var(--amber); }
+@media (pointer: coarse) { .btn, .form-control, .form-select, .abas__item, .chip { min-height: 44px; } }
+@media (max-width: 400px) { .contraste { grid-template-columns: 1fr; } .contraste__item + .contraste__item { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); } }

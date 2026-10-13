@@ -1,0 +1,69 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}Calculadoras financeiras com inflação: juros compostos, aportes e quanto você precisa para viver de renda.{% endblock %}">
+  <link rel="canonical" href="{{ CANONICAL }}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#1f6f54">
+  <link rel="manifest" href="{% url 'simulador:manifest' %}">
+  <link rel="icon" href="{% static 'simulador/icon.svg' %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static 'simulador/icon-192.png' %}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{% endblock %}">
+  <meta property="og:url" content="{{ CANONICAL }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'simulador/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'simulador/css/app.css' %}">
+  {% block schema %}{% endblock %}
+  {% if ADSENSE_CLIENT %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ ADSENSE_CLIENT }}" crossorigin="anonymous"></script>{% endif %}
+</head>
+<body>
+  <a class="pular" href="#conteudo">Ir para o conteúdo</a>
+  <header class="topo">
+    <div class="container-xxl topo__linha">
+      <a class="marca" href="{% url 'simulador:index' %}">{{ SITE_NAME }}</a>
+      <nav class="topo__nav" aria-label="Principal">
+        <a href="{% url 'simulador:index' %}">Viver de renda</a>
+        <a href="{% url 'simulador:juros_compostos' %}">Juros compostos</a>
+        <a href="{% url 'simulador:sobre' %}">Sobre</a>
+      </nav>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="rodape">
+    <div class="container-xxl">
+      <p class="rodape__aviso">As simulações têm caráter educativo e não são recomendação de investimento. Os valores são brutos, antes de Imposto de Renda e taxas, e assumem retorno constante, o que não ocorre na prática.</p>
+      <nav class="rodape__nav" aria-label="Institucional">
+        <a href="{% url 'simulador:sobre' %}">Sobre e metodologia</a>
+        <a href="{% url 'simulador:privacidade' %}">Política de privacidade</a>
+        <a href="{% url 'simulador:contato' %}">Contato</a>
+      </nav>
+      <p class="rodape__copy">© {% now "Y" %} {{ SITE_NAME }}</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'simulador/vendor/bootstrap.bundle.min.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+  <script>if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register("{% url 'simulador:sw' %}").catch(function () {}); });</script>
+  {% if ADSENSE_CLIENT %}
+  <script>
+    window.addEventListener('load', function () {
+      document.querySelectorAll('ins.adsbygoogle').forEach(function (el) {
+        if (!el.parentElement.offsetWidth) return; /* bloco oculto (ex.: lateral no celular) */
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+      });
+    });
+  </script>
+  {% endif %}
+</body>
+</html>

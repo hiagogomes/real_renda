@@ -1,0 +1,25 @@
+{% extends "simulador/base.html" %}
+{% block title %}Sobre e metodologia | {{ SITE_NAME }}{% endblock %}
+{% block description %}Como o {{ SITE_NAME }} calcula juros compostos, inflação e renda passiva, quais são as limitações e como o site se mantém.{% endblock %}
+{% block og_title %}Sobre e metodologia | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container-xxl"><main class="pagina-texto conteudo" id="conteudo">
+  <h1>Sobre o {{ SITE_NAME }}</h1>
+  <p>O {{ SITE_NAME }} é um conjunto de calculadoras gratuitas de planejamento financeiro para o Brasil. O foco é mostrar o que os números significam em poder de compra, e não apenas o valor nominal futuro.</p>
+  <h2>Metodologia</h2>
+  <ul>
+    <li><strong>Taxas equivalentes:</strong> conversões entre taxa anual e mensal por (1 + i)<sup>1/12</sup> − 1, nunca por divisão simples.</li>
+    <li><strong>Aportes:</strong> entram no fim de cada mês e passam a render no mês seguinte.</li>
+    <li><strong>Inflação:</strong> o valor real é o nominal dividido por (1 + IPCA)<sup>t</sup>. O retorno real segue a relação de Fisher.</li>
+    <li><strong>Viver de renda:</strong> patrimônio necessário pela taxa de retirada sustentável ou pelo retorno real mensal, com simulação das retiradas em valores de hoje.</li>
+  </ul>
+  <h2>Limitações</h2>
+  <p>Os cálculos são brutos (sem Imposto de Renda, taxas ou custos), supõem retorno e inflação constantes e não consideram risco. As taxas pré-definidas são referências que podem estar desatualizadas: confira as condições reais antes de investir. O conteúdo é educativo e não substitui um profissional certificado.</p>
+  <h2>Privacidade</h2>
+  <p>Os cálculos acontecem no seu navegador e os valores digitados não são enviados a nenhum servidor. Veja a <a href="{% url 'simulador:privacidade' %}">política de privacidade</a>.</p>
+  <h2>Como o site se mantém</h2>
+  <p>O site é financiado por anúncios exibidos pelo Google AdSense. Os anúncios são identificados como publicidade e não influenciam os cálculos.</p>
+  <h2>Contato</h2>
+  <p>Encontrou um erro ou tem uma sugestão? Fale pela página de <a href="{% url 'simulador:contato' %}">contato</a>.</p>
+</main></div>
+{% endblock %}

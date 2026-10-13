@@ -1,0 +1,12 @@
+{% extends "simulador/base.html" %}
+{% block title %}Contato | {{ SITE_NAME }}{% endblock %}
+{% block description %}Fale com a equipe do {{ SITE_NAME }}: correções, sugestões e dúvidas sobre as calculadoras.{% endblock %}
+{% block og_title %}Contato | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container-xxl"><main class="pagina-texto conteudo" id="conteudo">
+  <h1>Contato</h1>
+  <p>Encontrou um erro de cálculo, quer sugerir uma nova calculadora ou tem uma dúvida? Escreva para nós.</p>
+  {% if CONTACT_EMAIL %}<p><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></p>{% else %}<p>Defina <code>CONTACT_EMAIL</code> em <code>settings.py</code> para exibir o e-mail de contato aqui.</p>{% endif %}
+  <p>Não damos recomendação individual de investimento. Para isso, procure um profissional certificado.</p>
+</main></div>
+{% endblock %}

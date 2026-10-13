@@ -1,0 +1,32 @@
+<section class="conteudo" id="como-funciona">
+  <h2>Como funcionam os juros compostos</h2>
+  <p>Nos juros compostos, o rendimento de cada período é somado ao capital e passa a render no período seguinte: é o "juros sobre juros". Sem aportes, a fórmula é:</p>
+  <p class="formula">M = C × (1 + i)<sup>t</sup></p>
+  <p>em que <strong>M</strong> é o montante, <strong>C</strong> o capital inicial, <strong>i</strong> a taxa por período e <strong>t</strong> o número de períodos. Com aportes mensais no fim de cada mês, soma-se o valor futuro da série de aportes:</p>
+  <p class="formula">M = C × (1 + i)<sup>n</sup> + A × [(1 + i)<sup>n</sup> − 1] ÷ i</p>
+  <p>Aqui <strong>A</strong> é o aporte mensal, <strong>i</strong> a taxa mensal e <strong>n</strong> o total de meses. A calculadora aplica essa lógica mês a mês e mostra a memória de cálculo na tabela acima.</p>
+
+  <h3>Juros simples x juros compostos</h3>
+  <p>Nos juros simples, o rendimento incide só sobre o capital inicial. Nos compostos, incide sobre o saldo acumulado, e a diferença cresce com o tempo. Exemplo com R$ 10.000 a 1% ao mês, sem aportes:</p>
+  <div class="tabela-rolagem">
+    <table class="table table-sm tabela tabela--estatica">
+      <thead><tr><th>Prazo</th><th>Juros simples</th><th>Juros compostos</th><th>Diferença</th></tr></thead>
+      <tbody>
+        <tr><td>1 ano</td><td>R$ 11.200,00</td><td>R$ 11.268,25</td><td>R$ 68,25</td></tr>
+        <tr><td>2 anos</td><td>R$ 12.400,00</td><td>R$ 12.697,35</td><td>R$ 297,35</td></tr>
+        <tr><td>10 anos</td><td>R$ 22.000,00</td><td>R$ 33.003,87</td><td>R$ 11.003,87</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Taxa mensal e taxa anual: não basta dividir por 12</h3>
+  <p>Em juros compostos, 1% ao mês equivale a 12,68% ao ano, e não a 12%. O caminho inverso também exige cuidado: 12% ao ano equivalem a 0,9489% ao mês, pela fórmula de taxas equivalentes:</p>
+  <p class="formula">i<sub>mensal</sub> = (1 + i<sub>anual</sub>)<sup>1/12</sup> − 1</p>
+  <p>Dividir 12% por 12 e usar 1% ao mês superestima o resultado. Esta calculadora converte as taxas sempre pela equivalência composta.</p>
+
+  <h3>Valor nominal x poder de compra</h3>
+  <p>O valor nominal é o número que aparece no extrato daqui a alguns anos. Mas a inflação reduz o que esse dinheiro compra. Para comparar com o seu dinheiro de hoje, divida o valor futuro por (1 + IPCA)<sup>anos</sup>. Com IPCA de 4,5% ao ano, R$ 1 milhão daqui a 20 anos compra o que cerca de R$ 415 mil compram hoje. É por isso que existe a chave "Descontar inflação" acima.</p>
+
+  <h3>O que não está incluído</h3>
+  <p>Os resultados são brutos. Na renda fixa, o Imposto de Renda é regressivo, de 22,5% a 15% sobre o rendimento conforme o prazo. Também não entram taxas de custódia, corretagem ou administração, nem a oscilação de preços de FIIs e ações. A taxa de retorno é suposta constante, o que simplifica a realidade.</p>
+</section>

@@ -1,0 +1,32 @@
+{# Campos compartilhados pelos dois simuladores. Parâmetros: p (prefixo), ini, apo #}
+<div class="campo">
+  <label for="{{ p }}-inicial">Patrimônio inicial</label>
+  <div class="input-group"><span class="input-group-text">R$</span>
+    <input class="form-control" id="{{ p }}-inicial" type="text" inputmode="decimal" autocomplete="off" value="{{ ini }}"></div>
+</div>
+<div class="campo">
+  <label for="{{ p }}-aporte">Aporte mensal</label>
+  <div class="input-group"><span class="input-group-text">R$</span>
+    <input class="form-control" id="{{ p }}-aporte" type="text" inputmode="decimal" autocomplete="off" value="{{ apo }}"></div>
+</div>
+<div class="campo">
+  <label for="{{ p }}-preset">Onde você vai investir?</label>
+  <select class="form-select" id="{{ p }}-preset">
+    <option value="cdb" selected>CDB 100% do CDI</option>
+    <option value="ipcamais">Tesouro IPCA+</option>
+    <option value="fii">Carteira de FIIs / dividendos</option>
+    <option value="poupanca">Poupança</option>
+    <option value="manual">Informar a taxa manualmente</option>
+  </select>
+  <div class="campo__nota" id="{{ p }}-presetNota"></div>
+</div>
+<div class="campo">
+  <label for="{{ p }}-taxa">Taxa de juros</label>
+  <div class="input-group">
+    <input class="form-control" id="{{ p }}-taxa" type="text" inputmode="decimal" autocomplete="off" value="13,90">
+    <select class="form-select" id="{{ p }}-taxaTipo" aria-label="Período da taxa" style="max-width:7.5rem">
+      <option value="a" selected>% ao ano</option>
+      <option value="m">% ao mês</option>
+    </select>
+  </div>
+</div>

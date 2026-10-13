@@ -1,0 +1,211 @@
+{% extends "simulador/base.html" %}
+{% load static anuncios %}
+{% block title %}{{ pagina.title }}{% endblock %}
+{% block description %}{{ pagina.description }}{% endblock %}
+{% block og_title %}{{ pagina.title }}{% endblock %}
+{% block og_description %}{{ pagina.description }}{% endblock %}
+{% block schema %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endblock %}
+
+{% block content %}
+<div class="container-xxl">
+  <div class="row g-4">
+    <main class="col-xl-9" id="conteudo">
+
+      <header class="intro">
+        <h1>{{ pagina.h1 }}</h1>
+        <p class="intro__sub">{{ pagina.sub }}</p>
+      </header>
+
+      <div class="abas" role="tablist" aria-label="Simuladores">
+        <button class="abas__item{% if modo == 'renda' %} active{% endif %}" id="aba-r" data-bs-toggle="tab" data-bs-target="#pane-r" type="button" role="tab" aria-controls="pane-r" aria-selected="{% if modo == 'renda' %}true{% else %}false{% endif %}">Quanto preciso para viver de renda</button>
+        <button class="abas__item{% if modo != 'renda' %} active{% endif %}" id="aba-j" data-bs-toggle="tab" data-bs-target="#pane-j" type="button" role="tab" aria-controls="pane-j" aria-selected="{% if modo != 'renda' %}true{% else %}false{% endif %}">Juros compostos e aportes</button>
+      </div>
+
+      <div class="tab-content">
+
+        {# ---------- Módulo 1: juros compostos ---------- #}
+        <section class="tab-pane fade{% if modo != 'renda' %} show active{% endif %}" id="pane-j" role="tabpanel" aria-labelledby="aba-j" tabindex="0">
+          <div class="row g-4">
+            <div class="col-md-5">
+              <form class="painel" id="j-form" novalidate>
+                {% include "simulador/_campos_base.html" with p="j" ini="10.000" apo="500" %}
+                <div class="campo">
+                  <label for="j-prazo">Tempo de aplicação</label>
+                  <div class="input-group">
+                    <input class="form-control" id="j-prazo" type="text" inputmode="decimal" autocomplete="off" value="20">
+                    <select class="form-select" id="j-prazoTipo" aria-label="Unidade do prazo" style="max-width:7.5rem">
+                      <option value="a" selected>anos</option>
+                      <option value="m">meses</option>
+                    </select>
+                  </div>
+                </div>
+                <details class="avancado">
+                  <summary>Opções avançadas</summary>
+                  {% include "simulador/_campo_ipca.html" with p="j" %}
+                  <div class="form-check form-switch campo">
+                    <input class="form-check-input" type="checkbox" role="switch" id="j-corrigir">
+                    <label class="form-check-label" for="j-corrigir">Corrigir os aportes pelo IPCA</label>
+                    <div class="campo__nota">O aporte é tratado como valor de hoje e reajustado todo mês.</div>
+                  </div>
+                  <div class="form-check form-switch campo">
+                    <input class="form-check-input" type="checkbox" role="switch" id="j-ir">
+                    <label class="form-check-label" for="j-ir">Descontar IR de renda fixa (tabela regressiva)</label>
+                    <div class="campo__nota">22,5% até 180 dias, 20% até 360, 17,5% até 720 e 15% acima, sobre o rendimento total no resgate. Aproximação: aportes recentes teriam alíquota maior. Poupança é isenta.</div>
+                  </div>
+                </details>
+                <div class="alert alert-warning mb-0" id="j-erro" role="alert" hidden></div>
+              </form>
+            </div>
+            <div class="col-md-7">
+              <div class="resultado" id="j-resultado">
+                <div class="form-check form-switch resultado__chave">
+                  <input class="form-check-input" type="checkbox" role="switch" id="j-descontar">
+                  <label class="form-check-label" for="j-descontar">Descontar inflação (IPCA projetado)</label>
+                </div>
+                <p class="resultado__rotulo" id="j-total-rotulo">Montante acumulado</p>
+                <p class="resultado__valor" id="j-total">R$ 0,00</p>
+                <div class="contraste" role="group" aria-label="Valor nominal e poder de compra">
+                  <div class="contraste__item"><span>Valor nominal futuro</span><strong id="j-nominal">R$ 0,00</strong></div>
+                  <div class="contraste__item contraste__item--real"><span>Poder de compra de hoje</span><strong id="j-hoje">R$ 0,00</strong></div>
+                </div>
+                <p class="resultado__leitura" id="j-leitura"></p>
+                <dl class="resumo">
+                  <div><dt>Total aportado</dt><dd id="j-aportado">R$ 0,00</dd></div>
+                  <div><dt>Juros ganhos</dt><dd id="j-juros">R$ 0,00</dd></div>
+                </dl>
+                <div class="grafico"><canvas id="j-grafico" role="img" aria-label="Evolução do patrimônio, do valor em poder de compra de hoje e do total aportado"></canvas></div>
+                <div class="acoes">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="png" data-mod="j">Baixar gráfico (PNG)</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="csv" data-mod="j">Baixar planilha (Excel/CSV)</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="pdf" data-mod="j">Salvar em PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion tabelas" id="j-tabelas">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#j-collapse-anual" aria-expanded="false" aria-controls="j-collapse-anual">Memória de cálculo ano a ano</button></h2>
+              <div id="j-collapse-anual" class="accordion-collapse collapse" data-bs-parent="#j-tabelas">
+                <div class="accordion-body tabela-rolagem">
+                  <table class="table table-sm tabela"><thead><tr><th>Período</th><th>Total aportado</th><th>Juros acumulados</th><th>Saldo</th></tr></thead><tbody id="j-tbody-anual"></tbody></table>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#j-collapse-mensal" aria-expanded="false" aria-controls="j-collapse-mensal">Memória de cálculo mês a mês</button></h2>
+              <div id="j-collapse-mensal" class="accordion-collapse collapse" data-bs-parent="#j-tabelas">
+                <div class="accordion-body tabela-rolagem">
+                  <table class="table table-sm tabela"><thead><tr><th>Período</th><th>Total aportado</th><th>Juros acumulados</th><th>Saldo</th></tr></thead><tbody id="j-tbody-mensal"></tbody></table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {# ---------- Módulo 4: viver de renda ---------- #}
+        <section class="tab-pane fade{% if modo == 'renda' %} show active{% endif %}" id="pane-r" role="tabpanel" aria-labelledby="aba-r" tabindex="0">
+          <div class="row g-4">
+            <div class="col-md-5">
+              <form class="painel" id="r-form" novalidate>
+                <div class="campo">
+                  <label for="r-renda">Renda passiva mensal desejada (valor de hoje)</label>
+                  <div class="input-group"><span class="input-group-text">R$</span>
+                    <input class="form-control" id="r-renda" type="text" inputmode="decimal" autocomplete="off" value="5.000"></div>
+                </div>
+                <div class="chips" role="group" aria-label="Atalhos de renda mensal">
+                  <button type="button" class="chip" data-renda="3.000">R$ 3.000</button>
+                  <button type="button" class="chip" data-renda="5.000">R$ 5.000</button>
+                  <button type="button" class="chip" data-renda="10.000">R$ 10.000</button>
+                </div>
+                <div class="campo">
+                  <label for="r-modo">Como calcular o patrimônio necessário</label>
+                  <select class="form-select" id="r-modo">
+                    <option value="retirada" selected>Taxa de retirada sustentável</option>
+                    <option value="preservar">Viver só dos rendimentos (capital intacto)</option>
+                  </select>
+                </div>
+                <div class="campo" id="r-retirada-campo">
+                  <label for="r-retirada">Taxa de retirada anual</label>
+                  <div class="input-group">
+                    <input class="form-control" id="r-retirada" type="text" inputmode="decimal" autocomplete="off" value="4">
+                    <span class="input-group-text">% ao ano</span></div>
+                </div>
+                {% include "simulador/_campos_base.html" with p="r" ini="20.000" apo="1.500" %}
+                <div class="campo">
+                  <label for="r-prazo">Prazo desejado para chegar lá</label>
+                  <div class="input-group">
+                    <input class="form-control" id="r-prazo" type="text" inputmode="decimal" autocomplete="off" value="20">
+                    <span class="input-group-text">anos</span></div>
+                  <div class="campo__nota">Aportes corrigidos pelo IPCA: tudo em valores de hoje.</div>
+                </div>
+                <details class="avancado">
+                  <summary>Opções avançadas</summary>
+                  {% include "simulador/_campo_ipca.html" with p="r" %}
+                  <div class="campo__nota">Para considerar Imposto de Renda aqui, informe a taxa já líquida.</div>
+                </details>
+                <div class="alert alert-warning mb-0" id="r-erro" role="alert" hidden></div>
+              </form>
+            </div>
+            <div class="col-md-7">
+              <div class="resultado" id="r-resultado">
+                <p class="resultado__rotulo">Patrimônio necessário, em valores de hoje</p>
+                <p class="resultado__valor" id="r-meta">R$ 0,00</p>
+                <div class="contraste" role="group" aria-label="Meta em valores de hoje e nominais">
+                  <div class="contraste__item contraste__item--real"><span>Meta em R$ de hoje</span><strong id="r-hoje">R$ 0,00</strong></div>
+                  <div class="contraste__item"><span id="r-nominal-rotulo">Mesma meta, em R$ nominais</span><strong id="r-nominal">R$ 0,00</strong></div>
+                </div>
+                <p class="resultado__leitura" id="r-meta-leitura"></p>
+                <dl class="resumo resumo--tres">
+                  <div><dt>Prazo com seu aporte atual</dt><dd id="r-prazo-atual">—</dd><dd class="resumo__nota" id="r-prazo-nota"></dd></div>
+                  <div><dt>Aporte para chegar no prazo</dt><dd id="r-aporte-nec">—</dd><dd class="resumo__nota" id="r-aporte-nota"></dd></div>
+                  <div><dt>Duração das retiradas</dt><dd id="r-duracao">—</dd><dd class="resumo__nota" id="r-duracao-nota"></dd></div>
+                </dl>
+                <div class="grafico"><canvas id="r-grafico" role="img" aria-label="Projeção do patrimônio na fase de acúmulo e na fase de retiradas"></canvas></div>
+                <div class="acoes">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="png" data-mod="r">Baixar gráfico (PNG)</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="csv" data-mod="r">Baixar planilha (Excel/CSV)</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-acao="pdf" data-mod="r">Salvar em PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <p class="taxas-ref">Taxas pré-definidas são valores de referência (Selic em torno de 14% ao ano e IPCA em torno de 4,5% em outubro de 2026). Edite-as à vontade: não são promessa de rentabilidade.</p>
+
+      {% anuncio "meio1" "horizontal" %}
+
+      {% if modo == "renda" %}
+        {% include "simulador/_educ_renda.html" %}
+        {% anuncio "meio2" "retangulo" %}
+        {% include "simulador/_educ_juros.html" %}
+      {% else %}
+        {% include "simulador/_educ_juros.html" %}
+        {% anuncio "meio2" "retangulo" %}
+        {% include "simulador/_educ_renda.html" %}
+      {% endif %}
+
+      <section class="conteudo" id="perguntas">
+        <h2>Perguntas frequentes</h2>
+        {% for pergunta, resposta in pagina.faq %}
+        <details class="faq"><summary>{{ pergunta }}</summary><p>{{ resposta }}</p></details>
+        {% endfor %}
+      </section>
+
+      {% anuncio "rodape" "horizontal" %}
+    </main>
+
+    <aside class="col-xl-3 d-none d-xl-block" aria-label="Publicidade lateral">
+      <div class="lateral">{% anuncio "lateral" "vertical" %}</div>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'simulador/vendor/chart.umd.min.js' %}" defer></script>
+<script src="{% static 'simulador/js/finance.js' %}" defer></script>
+<script src="{% static 'simulador/js/app.js' %}" defer></script>
+{% endblock %}
