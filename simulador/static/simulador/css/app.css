@@ -140,3 +140,8 @@ h1, h2, h3, .marca, .resultado__valor { font-family: var(--serif); font-weight: 
 .contraste__item--real strong { color: var(--amber); }
 @media (pointer: coarse) { .btn, .form-control, .form-select, .abas__item, .chip { min-height: 44px; } }
 @media (max-width: 400px) { .contraste { grid-template-columns: 1fr; } .contraste__item + .contraste__item { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); } }
+
+:root { --red: #b3261e; }
+.resultado__nota { font-size: .85rem; color: var(--muted); margin: 0 0 .75rem; }
+.resultado__nota:empty { display: none; }
+@media print { .indicadores { display: none !important; } }

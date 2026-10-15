@@ -144,3 +144,6 @@ ADS_SLOTS = {                                             # IDs dos blocos criad
     "lateral": os.environ.get("ADS_SLOT_LATERAL", ""),
     "rodape": os.environ.get("ADS_SLOT_RODAPE", ""),
 }
+
+# Indicadores de mercado (carrossel)
+BRAPI_TOKEN = os.environ.get("BRAPI_TOKEN", "") 

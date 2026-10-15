@@ -187,6 +187,14 @@
     const usuf = F.usufruto({ patrimonio: meta, retiradaMensal: renda, retornoRealAnual: rr, maxMeses: 480 });
     const nominalEm = (m) => meta * Math.pow(1 + base.ipcaAnual, m / 12);
 
+    const ind = estado.ind;
+    $('r-usd').textContent = ind && ind.dolar ? `Equivale a cerca de US$ ${(meta / ind.dolar.valor).toLocaleString('pt-BR', { maximumFractionDigits: 0 })} ao dólar de hoje (R$ ${n2(ind.dolar.valor)}).` : '';
+    if (ind && ind.selic && ind.ipca_focus) {
+      const jr = (1 + ind.selic.valor / 100) / (1 + ind.ipca_focus.valor / 100) - 1;
+      $('r-contexto').textContent = modo === 'retirada'
+        ? `Contexto: o juro real de hoje é de ${pct(jr)} ao ano (Selic de ${n2(ind.selic.valor)}% e IPCA esperado de ${n2(ind.ipca_focus.valor)}%). Diante disso, uma retirada de ${pct(retirada)} tende a ser conservadora, mas juros altos não são permanentes: teste também cenários de retorno menor.`
+        : `Contexto: se o juro real de hoje (${pct(jr)} ao ano, antes do IR) se mantivesse, bastariam ${brl.format(renda / F.anualParaMensal(jr))} para viver só dos rendimentos. Esse nível de juros pode não durar.`;
+    } else $('r-contexto').textContent = '';
     $('r-meta').textContent = brl.format(meta);
     $('r-hoje').textContent = brl.format(meta);
     $('r-nominal').textContent = brl.format(nominalEm(meses));
@@ -260,7 +268,7 @@
     form.addEventListener('submit', (ev) => ev.preventDefault());
     form.addEventListener('input', (ev) => {
       if (ev.target.id === p + '-taxa') virarManual(p);
-      if (ev.target.id === p + '-ipca' && $(p + '-preset').value === 'ipcamais') aplicarPreset(p);
+      if (ev.target.id === p + '-ipca') { ev.target.dataset.editado = '1'; if ($(p + '-preset').value === 'ipcamais') aplicarPreset(p); }
       agendar(p);
     });
     form.addEventListener('change', (ev) => {
@@ -283,22 +291,27 @@
   });
   $('r-modo').addEventListener('change', () => { $('r-retirada-campo').hidden = $('r-modo').value !== 'retirada'; });
 
-  async function taxasBCB() {
-    try {
-      const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 4000);
-      const ler = async (n) => (await (await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${n}/dados/ultimos/1?formato=json`, { signal: ctrl.signal })).json())[0];
-      const [cdi, ipca] = await Promise.all([ler(4389), ler(13522)]); // CDI anualizado; IPCA acumulado 12 meses
-      const cdiV = Number(cdi.valor), ipcaV = Number(ipca.valor);
-      if (!(cdiV > 0 && cdiV < 100)) return;
-      F.PRESETS.cdb.anual = cdiV;
-      F.PRESETS.cdb.nota = `100% do CDI (${cdiV.toFixed(2).replace('.', ',')}% a.a. em ${cdi.data}, Banco Central), antes do IR.`;
-      ['j', 'r'].forEach((p) => {
-        if ($(p + '-preset').value === 'cdb') { aplicarPreset(p); agendar(p); }
-        if (ipcaV > -50 && ipcaV < 100) $(p + '-ipcaNota').textContent = `IPCA dos últimos 12 meses: ${ipcaV.toFixed(2).replace('.', ',')}% (Banco Central, ${ipca.data}).`;
-      });
-    } catch (e) { /* offline ou bloqueado: mantém as taxas de referência */ }
+  // Aplica os indicadores do servidor (/api/indicadores/) aos cálculos.
+  const n2 = (v) => Number(v).toFixed(2).replace('.', ',');
+  function aplicarIndicadores(d) {
+    if (!d) return;
+    estado.ind = d;
+    if (d.cdi && d.cdi.valor > 0 && d.cdi.valor < 100) {
+      F.PRESETS.cdb.anual = d.cdi.valor;
+      F.PRESETS.cdb.nota = `100% do CDI (${n2(d.cdi.valor)}% a.a. em ${d.cdi.data}, Banco Central), antes do IR.`;
+    }
+    ['j', 'r'].forEach((p) => {
+      const campo = $(p + '-ipca'), partes = [];
+      if (d.ipca_focus && !campo.dataset.editado) campo.value = n2(d.ipca_focus.valor); // só se o usuário não editou
+      if (d.ipca_focus) partes.push(`Expectativa de mercado para ${d.ipca_focus.ano}: ${n2(d.ipca_focus.valor)}% (Focus, BC).`);
+      if (d.ipca12) partes.push(`IPCA em 12 meses: ${n2(d.ipca12.valor)}%.`);
+      $(p + '-ipcaNota').textContent = partes.join(' ');
+      if (['cdb', 'ipcamais'].includes($(p + '-preset').value)) aplicarPreset(p);
+      agendar(p);
+    });
   }
+  window.addEventListener('indicadores', (e) => aplicarIndicadores(e.detail));
 
-  function iniciar() { calcJuros(); calcRenda(); taxasBCB(); }
+  function iniciar() { calcJuros(); calcRenda(); if (window.__indicadores) aplicarIndicadores(window.__indicadores); }
   if (window.Chart) iniciar(); else window.addEventListener('load', iniciar);
 })();

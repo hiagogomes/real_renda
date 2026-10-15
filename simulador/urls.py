@@ -10,6 +10,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("juros-compostos/", views.juros_compostos, name="juros_compostos"),
     path("viver-de-renda/", RedirectView.as_view(pattern_name="simulador:index", permanent=True)),
+    path("api/indicadores/", views.api_indicadores, name="api_indicadores"),
     path("manifest.webmanifest", views.manifest, name="manifest"),
     path("sw.js", views.service_worker, name="sw"),
     path("sobre/", views.sobre, name="sobre"),

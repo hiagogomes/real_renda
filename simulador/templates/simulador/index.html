@@ -7,6 +7,12 @@
 {% block schema %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endblock %}
 
 {% block content %}
+<section class="indicadores bg-white border-bottom" id="indicadores" data-url="{% url 'simulador:api_indicadores' %}" aria-roledescription="carrossel" aria-label="Indicadores de mercado">
+  <div class="container-xxl d-flex align-items-stretch gap-3 py-2">
+    <div class="indicadores__faixa d-flex flex-nowrap flex-grow-1 gap-3 overflow-auto" style="scroll-snap-type:x proximity;scrollbar-width:none;min-height:3.4rem" tabindex="0" role="group" aria-label="Indicadores de mercado, role para o lado"><span class="indicadores__carregando small text-secondary align-self-center">Carregando indicadores…</span></div>
+  </div>
+  <p class="container-xxl small text-secondary mb-0 pb-2" id="indicadores-fonte"></p>
+</section>
 <div class="container-xxl">
   <div class="row g-4">
     <main class="col-xl-9" id="conteudo">
@@ -156,6 +162,8 @@
                   <div class="contraste__item"><span id="r-nominal-rotulo">Mesma meta, em R$ nominais</span><strong id="r-nominal">R$ 0,00</strong></div>
                 </div>
                 <p class="resultado__leitura" id="r-meta-leitura"></p>
+                <p class="resultado__nota" id="r-usd"></p>
+                <p class="resultado__nota" id="r-contexto"></p>
                 <dl class="resumo resumo--tres">
                   <div><dt>Prazo com seu aporte atual</dt><dd id="r-prazo-atual">—</dd><dd class="resumo__nota" id="r-prazo-nota"></dd></div>
                   <div><dt>Aporte para chegar no prazo</dt><dd id="r-aporte-nec">—</dd><dd class="resumo__nota" id="r-aporte-nota"></dd></div>
@@ -206,6 +214,7 @@
 
 {% block scripts %}
 <script src="{% static 'simulador/vendor/chart.umd.min.js' %}" defer></script>
-<script src="{% static 'simulador/js/finance.js' %}" defer></script>
-<script src="{% static 'simulador/js/app.js' %}" defer></script>
+<script src="{% asset 'simulador/js/finance.js' %}" defer></script>
+<script src="{% asset 'simulador/js/app.js' %}" defer></script>
+<script src="{% asset 'simulador/js/indicadores.js' %}" defer></script>
 {% endblock %}

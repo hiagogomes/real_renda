@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils.cache import patch_cache_control
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.http import require_GET
@@ -111,6 +112,16 @@ def juros_compostos(request):
 
 
 @require_GET
+def api_indicadores(request):
+    """JSON com Selic, CDI, IPCA, dólar, expectativa Focus e ações (quando há token)."""
+    from django.http import JsonResponse
+    from . import indicadores
+    resp = JsonResponse(indicadores.obter_indicadores())
+    patch_cache_control(resp, public=True, max_age=300)
+    return resp
+
+
+@require_GET
 def manifest(request):
     dados = {
         "name": getattr(settings, "SITE_NAME", "Real Renda"), "short_name": "Real Renda",
@@ -118,21 +129,19 @@ def manifest(request):
         "start_url": "/", "scope": "/", "display": "standalone", "lang": "pt-BR",
         "background_color": "#f4f6f3", "theme_color": "#1f6f54",
         "icons": [
-            {"src": static("simulador/icon-192.png"), "sizes": "192x192", "type": "image/png"},
-            {"src": static("simulador/icon-512.png"), "sizes": "512x512", "type": "image/png"},
             {"src": static("simulador/icon.svg"), "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
         ],
     }
     return HttpResponse(json.dumps(dados, ensure_ascii=False), content_type="application/manifest+json")
 
 
-SW_JS = """const C='real-renda-v1',S='__STATIC__';
+SW_JS = """const C='real-renda-v2',S='__STATIC__';
 self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);
  if(r.method!=='GET'||u.origin!==location.origin||u.pathname.startsWith('/admin'))return;
  const salvar=n=>{if(n.ok){const c=n.clone();caches.open(C).then(x=>x.put(r,c));}return n;};
- if(u.pathname.startsWith(S)){e.respondWith(caches.match(r).then(h=>h||fetch(r).then(salvar)));return;}
+ if(u.pathname.startsWith(S)){e.respondWith(caches.match(r).then(h=>{const rede=fetch(r).then(salvar).catch(()=>h);return h||rede;}));return;}
  e.respondWith(fetch(r).then(salvar).catch(()=>caches.match(r)));});
 """
 
@@ -160,7 +169,7 @@ def contato(request):
 @require_GET
 def robots_txt(request):
     base = getattr(settings, "SITE_URL", "").rstrip("/") or f"{request.scheme}://{request.get_host()}"
-    linhas = ["User-agent: *", "Allow: /", "Disallow: /admin/", "", f"Sitemap: {base}/sitemap.xml"]
+    linhas = ["User-agent: *", "Allow: /", "Disallow: /admin/", "Disallow: /api/", "", f"Sitemap: {base}/sitemap.xml"]
     return HttpResponse("\n".join(linhas) + "\n", content_type="text/plain")
 
 
@@ -188,3 +197,4 @@ class PaginasSitemap(Sitemap):
 
     def priority(self, item):
         return self._prioridades[item]
+    
