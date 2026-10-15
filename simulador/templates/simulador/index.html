@@ -7,11 +7,14 @@
 {% block schema %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endblock %}
 
 {% block content %}
-<section class="indicadores bg-white border-bottom" id="indicadores" data-url="{% url 'simulador:api_indicadores' %}" aria-roledescription="carrossel" aria-label="Indicadores de mercado">
-  <div class="container-xxl d-flex align-items-stretch gap-3 py-2">
-    <div class="indicadores__faixa d-flex flex-nowrap flex-grow-1 gap-3 overflow-auto" style="scroll-snap-type:x proximity;scrollbar-width:none;min-height:3.4rem" tabindex="0" role="group" aria-label="Indicadores de mercado, role para o lado"><span class="indicadores__carregando small text-secondary align-self-center">Carregando indicadores…</span></div>
+<section class="indicadores" id="indicadores" data-url="{% url 'simulador:api_indicadores' %}" aria-roledescription="carrossel" aria-label="Indicadores de mercado">
+  <div class="container-xxl indicadores__linha">
+    <span class="indicadores__titulo">Mercado hoje</span>
+    <div class="indicadores__faixa" tabindex="0" role="group" aria-label="Indicadores de mercado">
+      <div class="indicadores__esqueleto" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
   </div>
-  <p class="container-xxl small text-secondary mb-0 pb-2" id="indicadores-fonte"></p>
+  <p class="container-xxl indicadores__fonte" id="indicadores-fonte"></p>
 </section>
 <div class="container-xxl">
   <div class="row g-4">
